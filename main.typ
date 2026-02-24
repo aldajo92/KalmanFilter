@@ -9,6 +9,7 @@
   authors: ("Alejandro Gómez"),
   ratio: 16/9,
   layout: "medium",
+  count: none,
   toc: true,
   footer: true,
   title-color: rgb("#1f4788"),
@@ -110,9 +111,9 @@ $z^(-1)$: operador de retardo unitario (transformada Z). #h(0.5em) $z^(-1) bold(
 $ p(x) = frac(1, sqrt(2 pi sigma^2)) exp(-frac((x - mu)^2, 2 sigma^2)) $
 
 *Multivariada:*
-$ p(bold(x)) = frac(1, (2 pi)^(n slash 2) |bold(Sigma)|^(1 slash 2)) exp(-1/2 (bold(x) - bold(mu))^T bold(Sigma)^(-1) (bold(x) - bold(mu))) $
+$ p(bold(X)) = frac(1, (2 pi)^(n slash 2) |bold(Sigma)|^(1 slash 2)) exp(-1/2 (bold(X) - bold(mu))^T bold(Sigma)^(-1) (bold(X) - bold(mu))) $
 
-Notación compacta: $bold(x) tilde cal(N)(bold(mu), bold(Sigma))$, con $bold(mu) in RR^n$ y $bold(Sigma) in RR^(n times n)$.
+Notación compacta: $bold(X) tilde cal(N)(bold(mu), bold(Sigma))$, con $bold(mu) in RR^n$ y $bold(Sigma) in RR^(n times n)$.
 
 == Matriz de Covarianza
 
@@ -133,13 +134,13 @@ En el filtro de Kalman, $bold(P)$ es la incertidumbre asociada a la estimación 
 
 == Transformación Lineal de Gaussianas
 
-Si $bold(x) tilde cal(N)(bold(mu), bold(Sigma))$ y se aplica $bold(y) = bold(A) bold(x) + bold(b)$:
+Si $bold(X) tilde cal(N)(bold(mu), bold(Sigma))$ y se aplica $bold(Y) = bold(A) bold(X) + bold(b)$:
 
-$ bold(y) tilde cal(N)(bold(A) bold(mu) + bold(b), space bold(A) bold(Sigma) bold(A)^T) $
+$ bold(Y) tilde cal(N)(bold(A) bold(mu) + bold(b), space bold(A) bold(Sigma) bold(A)^T) $
 
-Con ruido aditivo independiente $bold(w) tilde cal(N)(bold(0), bold(Q))$:
+Con ruido aditivo independiente $bold(W) tilde cal(N)(bold(0), bold(Q))$:
 
-$ bold(y) = bold(A) bold(x) + bold(w) quad ==> quad bold(y) tilde cal(N)(bold(A) bold(mu), space bold(A) bold(Sigma) bold(A)^T + bold(Q)) $
+$ bold(Y) = bold(A) bold(X) + bold(W) quad ==> quad bold(Y) tilde cal(N)(bold(A) bold(mu), space bold(A) bold(Sigma) bold(A)^T + bold(Q)) $
 
 Esta propiedad da origen directo a la *etapa de predicción* del filtro.
 
