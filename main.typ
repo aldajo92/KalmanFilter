@@ -212,6 +212,239 @@ $bold(K)_k$ balancea la incertidumbre de la predicción ($bold(P)_(k|k-1)$) cont
 
 La ganancia $bold(K)_k$ minimiza la traza de $bold(P)_(k|k)$, es decir, minimiza la varianza total del error de estimación.
 
+== Diagrama del Estimador
+
+#align(center, canvas(length: 0.85cm, {
+  import draw: *
+
+  set-style(stroke: 0.8pt, mark: (fill: black))
+
+  let y0 = 0
+  let yt = 2.0
+  let ybyp = -1.4
+  let yfb = -2.8
+
+  let xU = 0
+  let xB = 2.4
+  let xS1 = 4.6
+  let xBr = 6.4
+  let xH = 8.0
+  let xS3 = 9.8
+  let xK = 11.4
+  let xS2 = 13.0
+  let xOut = 15.0
+
+  // Blocks
+  rect((xB - 0.85, y0 - 0.45), (xB + 0.85, y0 + 0.45))
+  content((xB, y0), $bold(B)_(k-1)$)
+
+  rect((xH - 0.55, y0 - 0.45), (xH + 0.55, y0 + 0.45))
+  content((xH, y0), $bold(H)_k$)
+
+  rect((xK - 0.55, y0 - 0.45), (xK + 0.55, y0 + 0.45))
+  content((xK, y0), $bold(K)_k$)
+
+  // Feedback blocks
+  rect((xH - 0.55, yfb - 0.45), (xH + 0.55, yfb + 0.45))
+  content((xH, yfb), $z^(-1)$)
+
+  rect((xS1 - 0.85, yfb - 0.45), (xS1 + 0.85, yfb + 0.45))
+  content((xS1, yfb), $bold(A)_(k-1)$)
+
+  // Sum junctions
+  circle((xS1, y0), radius: 0.35)
+  content((xS1, y0), $plus.o$)
+
+  circle((xS3, y0), radius: 0.35)
+  content((xS3, y0), $plus.o$)
+
+  circle((xS2, y0), radius: 0.35)
+  content((xS2, y0), $plus.o$)
+
+  // Innovation signs on S3
+  content((xS3 - 0.55, y0 + 0.2), text(size: 7pt)[$minus$])
+  content((xS3 + 0.2, y0 + 0.55), text(size: 7pt)[$plus$])
+
+  // Branch dots
+  circle((xBr, y0), radius: 0.08, fill: black)
+  let xFbBr = xS2 + 1.0
+  circle((xFbBr, y0), radius: 0.08, fill: black)
+
+  // Signal labels
+  content((xU, y0), $bold(U)_(k-1)$)
+  content((xOut, y0), $hat(bold(X))_(k|k)$)
+  content((xBr + 0.05, y0 + 0.55), $hat(bold(X))_(k|k-1)$)
+  content((xS3, yt), $bold(Z)_k$)
+
+  // Main flow arrows
+  line((xU + 0.8, y0), (xB - 0.85, y0), mark: (end: ">"))
+  line((xB + 0.85, y0), (xS1 - 0.35, y0), mark: (end: ">"))
+  line((xS1 + 0.35, y0), (xH - 0.55, y0), mark: (end: ">"))
+  line((xH + 0.55, y0), (xS3 - 0.35, y0), mark: (end: ">"))
+  line((xS3 + 0.35, y0), (xK - 0.55, y0), mark: (end: ">"))
+  line((xK + 0.55, y0), (xS2 - 0.35, y0), mark: (end: ">"))
+  line((xS2 + 0.35, y0), (xOut - 0.7, y0), mark: (end: ">"))
+
+  // Z_k → S3
+  line((xS3, yt - 0.4), (xS3, y0 + 0.35), mark: (end: ">"))
+
+  // Bypass: X̂_{k|k-1} directly to S2
+  line((xBr, y0 - 0.08), (xBr, ybyp))
+  line((xBr, ybyp), (xS2, ybyp))
+  line((xS2, ybyp), (xS2, y0 - 0.35), mark: (end: ">"))
+
+  // Feedback: X̂_{k|k} → z⁻¹ → A → S1
+  line((xFbBr, y0 - 0.08), (xFbBr, yfb))
+  line((xFbBr, yfb), (xH + 0.55, yfb), mark: (end: ">"))
+  line((xH - 0.55, yfb), (xS1 + 0.85, yfb), mark: (end: ">"))
+  line((xS1, yfb + 0.45), (xS1, y0 - 0.35), mark: (end: ">"))
+}))
+
+== Sistema y Estimador
+
+#align(center, canvas(length: 0.52cm, {
+  import draw: *
+
+  set-style(stroke: 0.8pt, mark: (fill: black))
+
+  // --- Y coordinates ---
+  let y0s = 8.5
+  let yts = 10.2
+  let ybs = 6.5
+
+  let y0e = 0.5
+  let ybyp = -0.8
+  let yfb = -2.4
+
+  // --- X coordinates (shared) ---
+  let xB = 3.0
+  let xS1 = 5.2
+  let xBr = 6.8
+  let xH = 8.4
+  let xSm = 10.2
+  let xK = 12.0
+  let xS2 = 13.6
+  let xOut = 15.4
+
+  // ==================== SISTEMA (TOP) ====================
+
+  rect((xB - 1.5, ybs - 1.0), (xSm + 1.5, yts + 0.6),
+    stroke: (thickness: 1pt, dash: "dashed", paint: rgb("#1f4788")))
+  content((xS1 + 1.5, yts + 1.1), text(size: 7pt, fill: rgb("#1f4788"), weight: "bold")[Sistema])
+
+  rect((xB - 0.8, y0s - 0.4), (xB + 0.8, y0s + 0.4))
+  content((xB, y0s), $bold(B)_(k-1)$)
+
+  rect((xH - 0.5, y0s - 0.4), (xH + 0.5, y0s + 0.4))
+  content((xH, y0s), $bold(H)_k$)
+
+  rect((xBr - 0.5, ybs - 0.4), (xBr + 0.5, ybs + 0.4))
+  content((xBr, ybs), $z^(-1)$)
+
+  rect((xS1 - 0.8, ybs - 0.4), (xS1 + 0.8, ybs + 0.4))
+  content((xS1, ybs), $bold(A)_(k-1)$)
+
+  circle((xS1, y0s), radius: 0.32)
+  content((xS1, y0s), $plus.o$)
+
+  circle((xSm, y0s), radius: 0.32)
+  content((xSm, y0s), $plus.o$)
+
+  circle((xBr, y0s), radius: 0.07, fill: black)
+
+  content((0.5, y0s), $bold(U)_(k-1)$)
+  content((xBr + 0.05, y0s + 0.5), $bold(X)_k$)
+  content((xS1, yts), $bold(W)_(k-1)$)
+  content((xSm, yts), $bold(V)_k$)
+
+  line((1.3, y0s), (xB - 0.8, y0s), mark: (end: ">"))
+  line((xB + 0.8, y0s), (xS1 - 0.32, y0s), mark: (end: ">"))
+  line((xS1 + 0.32, y0s), (xH - 0.5, y0s), mark: (end: ">"))
+  line((xH + 0.5, y0s), (xSm - 0.32, y0s), mark: (end: ">"))
+  line((xSm + 0.32, y0s), (xSm + 1.2, y0s), mark: (end: ">"))
+
+  line((xS1, yts - 0.35), (xS1, y0s + 0.32), mark: (end: ">"))
+  line((xSm, yts - 0.35), (xSm, y0s + 0.32), mark: (end: ">"))
+
+  line((xBr, y0s - 0.07), (xBr, ybs + 0.4), mark: (end: ">"))
+  line((xBr - 0.5, ybs), (xS1 + 0.8, ybs), mark: (end: ">"))
+  line((xS1, ybs + 0.4), (xS1, y0s - 0.32), mark: (end: ">"))
+
+  // Z_k label outside system box
+  content((xSm + 2.2, y0s), $bold(Z)_k$)
+
+  // Branch dot on Z_k output line
+  circle((xSm + 1.5, y0s), radius: 0.07, fill: black)
+
+  // ==================== ESTIMADOR (BOTTOM) ====================
+
+  rect((xB - 1.5, yfb - 1.0), (xOut + 1.0, y0e + 1.0),
+    stroke: (thickness: 1pt, dash: "dashed", paint: rgb("#1f4788")))
+  content((xS1 + 4.0, yfb - 1.4), text(size: 7pt, fill: rgb("#1f4788"), weight: "bold")[Estimador (Filtro de Kalman)])
+
+  rect((xB - 0.8, y0e - 0.4), (xB + 0.8, y0e + 0.4))
+  content((xB, y0e), $bold(B)_(k-1)$)
+
+  rect((xH - 0.5, y0e - 0.4), (xH + 0.5, y0e + 0.4))
+  content((xH, y0e), $bold(H)_k$)
+
+  rect((xK - 0.5, y0e - 0.4), (xK + 0.5, y0e + 0.4))
+  content((xK, y0e), $bold(K)_k$)
+
+  rect((xH - 0.5, yfb - 0.4), (xH + 0.5, yfb + 0.4))
+  content((xH, yfb), $z^(-1)$)
+
+  rect((xS1 - 0.8, yfb - 0.4), (xS1 + 0.8, yfb + 0.4))
+  content((xS1, yfb), $bold(A)_(k-1)$)
+
+  circle((xS1, y0e), radius: 0.32)
+  content((xS1, y0e), $plus.o$)
+
+  circle((xSm, y0e), radius: 0.32)
+  content((xSm, y0e), $plus.o$)
+  content((xSm - 0.5, y0e + 0.18), text(size: 6pt)[$minus$])
+  content((xSm + 0.18, y0e + 0.5), text(size: 6pt)[$plus$])
+
+  circle((xS2, y0e), radius: 0.32)
+  content((xS2, y0e), $plus.o$)
+
+  circle((xBr, y0e), radius: 0.07, fill: black)
+  let xFbBr = xS2 + 0.9
+  circle((xFbBr, y0e), radius: 0.07, fill: black)
+
+  content((0.5, y0e), $bold(U)_(k-1)$)
+  content((xOut + 0.6, y0e), $hat(bold(X))_(k|k)$)
+  content((xBr + 0.05, y0e + 0.5), $hat(bold(X))_(k|k-1)$)
+
+  line((1.3, y0e), (xB - 0.8, y0e), mark: (end: ">"))
+  line((xB + 0.8, y0e), (xS1 - 0.32, y0e), mark: (end: ">"))
+  line((xS1 + 0.32, y0e), (xH - 0.5, y0e), mark: (end: ">"))
+  line((xH + 0.5, y0e), (xSm - 0.32, y0e), mark: (end: ">"))
+  line((xSm + 0.32, y0e), (xK - 0.5, y0e), mark: (end: ">"))
+  line((xK + 0.5, y0e), (xS2 - 0.32, y0e), mark: (end: ">"))
+  line((xS2 + 0.32, y0e), (xOut - 0.2, y0e), mark: (end: ">"))
+
+  line((xBr, y0e - 0.07), (xBr, ybyp))
+  line((xBr, ybyp), (xS2, ybyp))
+  line((xS2, ybyp), (xS2, y0e - 0.32), mark: (end: ">"))
+
+  line((xFbBr, y0e - 0.07), (xFbBr, yfb))
+  line((xFbBr, yfb), (xH + 0.5, yfb), mark: (end: ">"))
+  line((xH - 0.5, yfb), (xS1 + 0.8, yfb), mark: (end: ">"))
+  line((xS1, yfb + 0.4), (xS1, y0e - 0.32), mark: (end: ">"))
+
+  // ==================== CONEXIONES ====================
+
+  // U branching: vertical line connecting both U inputs
+  line((0.5, y0s - 0.3), (0.5, y0e + 0.3), stroke: (thickness: 0.6pt, dash: "dotted"))
+
+  // Z_k: from system output down to estimator innovation node
+  let ymid = 3.8
+  line((xSm + 1.5, y0s), (xSm + 1.5, ymid))
+  line((xSm + 1.5, ymid), (xSm, ymid))
+  line((xSm, ymid), (xSm, y0e + 0.32), mark: (end: ">"))
+}))
+
 == Algoritmo Completo
 
 *Inicialización:* $hat(bold(X))_(0|0) = bb("E")[bold(X)_0]$, #h(1em) $bold(P)_(0|0) = bb("E")[(bold(X)_0 - hat(bold(X))_(0|0))(bold(X)_0 - hat(bold(X))_(0|0))^T]$
@@ -230,3 +463,49 @@ bold(P)_(k|k-1) &= bold(A)_(k-1) bold(P)_(k-1|k-1) bold(A)_(k-1)^T + bold(Q)_(k-
 $ bold(K)_k &= bold(P)_(k|k-1) bold(H)_k^T (bold(H)_k bold(P)_(k|k-1) bold(H)_k^T + bold(R)_k)^(-1) \
 hat(bold(X))_(k|k) &= hat(bold(X))_(k|k-1) + bold(K)_k (bold(Z)_k - bold(H)_k hat(bold(X))_(k|k-1)) \
 bold(P)_(k|k) &= (bold(I) - bold(K)_k bold(H)_k) bold(P)_(k|k-1) $
+
+= Filtro de Kalman Extendido (EKF)
+
+== Modelo No Lineal
+
+Cuando el sistema no es lineal, las funciones $bold(f)$ y $bold(h)$ reemplazan a las matrices $bold(A)$ y $bold(H)$:
+
+*Ecuación de estado:*
+$ bold(X)_(k) = bold(f)(bold(X)_(k-1), bold(U)_(k-1)) + bold(W)_(k-1) $
+
+*Ecuación de medición:*
+$ bold(Z)_k = bold(h)(bold(X)_k) + bold(V)_k $
+
+La distribución del estado tras una transformación no lineal ya no es gaussiana en general $arrow.r$ no se puede aplicar el filtro de Kalman directamente.
+
+== Linealización por Jacobianos
+
+El EKF aproxima las funciones no lineales mediante expansión de Taylor de primer orden:
+
+$ bold(f)(bold(X)) approx bold(f)(hat(bold(X))) + bold(F) (bold(X) - hat(bold(X))), quad bold(F)_(i j) = frac(partial f_i, partial X_j) bar_(bold(X) = hat(bold(X))) $
+
+$ bold(h)(bold(X)) approx bold(h)(hat(bold(X))) + bold(H) (bold(X) - hat(bold(X))), quad bold(H)_(i j) = frac(partial h_i, partial X_j) bar_(bold(X) = hat(bold(X))) $
+
+Los jacobianos $bold(F)$ y $bold(H)$ se recalculan en cada paso $k$ alrededor de la estimación actual.
+
+== EKF: Predicción
+
+$ hat(bold(X))_(k|k-1) &= bold(f)(hat(bold(X))_(k-1|k-1), bold(U)_(k-1)) $
+
+$ bold(F)_(k-1) &= frac(partial bold(f), partial bold(X)) bar_(bold(X) = hat(bold(X))_(k-1|k-1)) $
+
+$ bold(P)_(k|k-1) &= bold(F)_(k-1) bold(P)_(k-1|k-1) bold(F)_(k-1)^T + bold(Q)_(k-1) $
+
+La predicción usa la función no lineal $bold(f)$ para propagar el estado, pero el jacobiano $bold(F)$ para propagar la covarianza.
+
+== EKF: Actualización
+
+$ bold(H)_k &= frac(partial bold(h), partial bold(X)) bar_(bold(X) = hat(bold(X))_(k|k-1)) $
+
+$ bold(K)_k &= bold(P)_(k|k-1) bold(H)_k^T (bold(H)_k bold(P)_(k|k-1) bold(H)_k^T + bold(R)_k)^(-1) $
+
+$ hat(bold(X))_(k|k) &= hat(bold(X))_(k|k-1) + bold(K)_k (bold(Z)_k - bold(h)(hat(bold(X))_(k|k-1))) $
+
+$ bold(P)_(k|k) &= (bold(I) - bold(K)_k bold(H)_k) bold(P)_(k|k-1) $
+
+La innovación usa $bold(h)$ no lineal, pero la ganancia y la covarianza usan el jacobiano $bold(H)$.
